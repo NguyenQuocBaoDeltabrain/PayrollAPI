@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SuperHeroAPI.Models;
 using SuperHeroAPI.Validations;
 using AutoMapper;
-using System;
+using Newtonsoft.Json.Linq;
+
 
 namespace SuperHeroAPI.Services
 {
@@ -14,25 +14,38 @@ namespace SuperHeroAPI.Services
         void Update(int id, SalaryRequest salary);
         void Remove(int id);
         ActionResult<string> GetDayInMonth(String month);
+        float TaxEachStaff(float TotalSalary);
+        float SalaryOTEachStaff(Staff staff,List<OverTime> OverTimes);
     }
 
     public class SalaryService : ISalaryService
     {
         private readonly DatabaseContext _context;
         private readonly IMapper _mapper;
+
         public SalaryService(DatabaseContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
+        public string jsonFile = @"C:\Users\PC011\source\repos\SuperHeroAPI\SuperHeroAPI\Utils\holidays.json";
 
-        public string[] holidays = new string[] { "2022-01-01", "2022-02-10", "2022-02-11", "2022-02-12", "2022-02-13", "2022-02-14", "2022-02-15", "2022-02-16", "2022-04-21", "2022-04-30", "2022-05-01", "2022-09-02", "2022-12-24", "2022-12-25" };
-
-        public float SalaryOTEachStaff(Staff staff)
+  
+        public List<OverTime> GetOverTimesByID(int staffID)
         {
+            List<OverTime> OverTimes = _context.OverTimes.Where(ot => ot.StaffId == staffID).ToList();
+            return OverTimes;
+        }
+
+
+        public float SalaryOTEachStaff(Staff staff,List<OverTime> OverTimes )
+        {
+    
             float TotalSalaryOT = 0;
-            var OverTimes = _context.OverTimes.Where(ot => ot.StaffId == staff.Id);
-            Console.WriteLine("Over time {0}",OverTimes);
+            var json = File.ReadAllText(jsonFile);
+            var jObject = JObject.Parse(json);
+            JArray holidays= (JArray)jObject["holidays"];
+       
             foreach (var OverTime in OverTimes)
             {
                 float HourOT = (float)(OverTime.EndAt - OverTime.StartAt).TotalHours;
@@ -45,8 +58,7 @@ namespace SuperHeroAPI.Services
                 {
                     var date = OverTime.StartAt;
                     String covertString = date.ToString("yyyy-MM-dd");
-                    Console.WriteLine("STRING {0}", covertString);
-                    if (covertString == day)
+                    if (covertString == day["day"].ToString())
                     {
                         IsHoliday = true;
                         SalaryOT = (float)(HourOT * (staff.Salary / 192) * 3);
@@ -73,7 +85,7 @@ namespace SuperHeroAPI.Services
                 OverTime.IsSalary = true;
  
             }
-            _context.SaveChanges();
+            //_context.SaveChanges();
             return TotalSalaryOT;      
          }
 
@@ -119,7 +131,8 @@ namespace SuperHeroAPI.Services
                 foreach (Staff staff in staffs)
                 {
                     //SalaryOT
-                    SalaryOT = SalaryOTEachStaff(staff);
+                    List<OverTime> OverTimes = GetOverTimesByID(staff.Id); 
+                    SalaryOT = SalaryOTEachStaff(staff,OverTimes);
                     float SalaryBasic = staff.Salary;
                     float TotalSalary = SalaryBasic + SalaryOT;
                     //Tax

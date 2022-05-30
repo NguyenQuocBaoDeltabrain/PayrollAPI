@@ -12,8 +12,8 @@ using SuperHeroAPI.Models;
 namespace SuperHeroAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220525094833_initdabatase")]
-    partial class initdabatase
+    [Migration("20220529141656_initDatabase")]
+    partial class initDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

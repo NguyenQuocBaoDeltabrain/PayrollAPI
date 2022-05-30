@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SuperHeroAPI.Migrations
 {
-    public partial class initdabatase : Migration
+    public partial class initDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

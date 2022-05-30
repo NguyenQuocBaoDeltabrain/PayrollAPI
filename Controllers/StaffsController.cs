@@ -43,7 +43,7 @@ namespace SuperHeroAPI.Controllers
         public IActionResult PostStaff(StaffRequest dto)
         {
             _staffService.Create(dto);
-            return Created("Ok", new { message = "Register new user successfully" });
+            return Created("Ok", new { message = "Create Staff successfully" });
         }
 
         // DELETE: api/Staffs/5
