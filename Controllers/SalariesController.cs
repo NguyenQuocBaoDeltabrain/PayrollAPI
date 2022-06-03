@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PayrollAPI.Services;
 using PayrollAPI.Validations;
-
+//using System.Web.Http;
 
 namespace PayrollAPI.Controllers
 {
@@ -16,9 +16,9 @@ namespace PayrollAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult finds()
+        public IActionResult finds([FromQuery] string month)
         {
-            List<SalaryResponse> salaries = _salaryService.finds();
+            List<SalaryResponse> salaries = _salaryService.finds(month);
             return Ok(salaries);
         }
 

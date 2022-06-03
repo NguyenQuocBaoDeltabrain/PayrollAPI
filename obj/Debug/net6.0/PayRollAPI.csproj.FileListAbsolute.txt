@@ -129,3 +129,6 @@ C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\obj\Debug\net6.0\PayrollAPI.pd
 C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\obj\Debug\net6.0\PayrollAPI.genruntimeconfig.cache
 C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\obj\Debug\net6.0\ref\PayrollAPI.dll
 C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
+C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\bin\Debug\net6.0\System.Net.Http.Formatting.dll
+C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\bin\Debug\net6.0\System.Web.Http.dll
+C:\Users\PC011\source\repos\PayrollAPI\PayRollAPI\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll

@@ -9,7 +9,7 @@ namespace PayrollAPI.Services
 {
     public interface ISalaryService
     {
-        List<SalaryResponse> finds();
+        List<SalaryResponse> finds(string month);
         List<SalaryResponse> findsByStaffIdAndMonth(FindStaffAndOTRequest dto);
         int totalWorkdaysInMonth(int month, int year);
         float TaxEachStaff(float totalSalary);
@@ -32,9 +32,9 @@ namespace PayrollAPI.Services
             List<OverTime> overTimes = _context.OverTimes.Where(ot => ot.staffId == staffId).ToList();
             return overTimes;
         }
-        public List<SalaryResponse> finds()
+        public List<SalaryResponse> finds(string month)
         {
-            List<Salary> salaries = _context.Salaries.ToList();
+            List<Salary> salaries = _context.Salaries.Where(salary => salary.month == month).ToList();
             List<SalaryResponse> salariesRO = covertRO(salaries);
             return salariesRO;
         }
