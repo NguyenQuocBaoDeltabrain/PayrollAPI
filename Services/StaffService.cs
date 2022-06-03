@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SuperHeroAPI.Models;
-using SuperHeroAPI.Validations;
-using AutoMapper;
+﻿using AutoMapper;
+using PayrollAPI.Models;
+using PayrollAPI.Validations;
 
-namespace SuperHeroAPI.Services
+namespace PayrollAPI.Services
 {
     public interface IStaffsService
     {
-        StaffResponse GetStaffByID(int id);
+        StaffResponse findById(int id);
         void Create(StaffRequest staff);
-        void Update(int id,StaffRequest staff);
+        void Update(int id, StaffRequest staff);
         void Remove(int id);
     }
 
@@ -24,60 +22,45 @@ namespace SuperHeroAPI.Services
             _mapper = mapper;
         }
 
-        public StaffResponse GetStaffByID(int id)
+        public StaffResponse findById(int id)
         {
-            if (_context.Staffs == null)
-            {
-                throw new KeyNotFoundException("Staff table not exist record");
-            }
             Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
-            var response = _mapper.Map<StaffResponse>(staff);
+            StaffResponse response = _mapper.Map<StaffResponse>(staff);
             return response;
         }
-
-        public void Remove(int id)
-        {
-            if (_context.Staffs == null)
-            {
-                throw new KeyNotFoundException("Staff table not exist record");
-            }
-            Staff staff = _context.Staffs.Find(id);
-            if(staff == null)
-            {
-                throw new KeyNotFoundException("Staff Not Found");
-
-            }
-
-            _context.Staffs.Remove(staff);
-            _context.SaveChanges();
-            
-        }
-        
         public void Create(StaffRequest dto)
         {
-            if (_context.Staffs == null)
+            bool isExist = _context.Staffs.Count(staff => staff.name == dto.name) > 0;
+            if(isExist) throw new BadHttpRequestException("Staff Is Exist");
+            if (dto.salary < 1000000)
             {
-                throw new KeyNotFoundException("Staff table not exist record");
+                throw new BadHttpRequestException("Salary Not < 1,000,000 VND");
             }
-            Staff staff = _mapper.Map<Staff>(dto);
-            _context.Staffs.Add(staff);
-           _context.SaveChanges();
+            else
+            {
+                Staff staff = _mapper.Map<Staff>(dto);
+                _ = _context.Staffs.Add(staff);
+                _ = _context.SaveChanges();
+            }
         }
-
-        public void Update(int id,StaffRequest dto)
+        public void Update(int id, StaffRequest dto)
         {
-            if (_context.Staffs == null)
+            if (dto.salary < 1000000)
             {
-                throw new KeyNotFoundException("Staff table not exist record");
+                throw new BadHttpRequestException("Salary Not < 1,000,000 VND");
             }
-            Staff IsStaff = _context.Staffs.Find(id);
-            if (IsStaff == null)
-            {
-                throw new KeyNotFoundException("Staff Not Found");
-            }
-            _mapper.Map(dto, IsStaff);
-            _context.Staffs.Update(IsStaff);
-            _context.SaveChanges();
+            Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
+            _ = _mapper.Map(dto,staff);
+            _ = _context.Staffs.Update(staff);
+            _ = _context.SaveChanges();
+        }
+        public void Remove(int id)
+        {
+
+            Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
+            _ = _context.Staffs.Remove(staff);
+            _ = _context.SaveChanges();
+
         }
     }
 }

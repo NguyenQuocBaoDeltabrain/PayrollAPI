@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SuperHeroAPI.Models;
+using PayrollAPI.Models;
 
 #nullable disable
 
-namespace SuperHeroAPI.Migrations
+namespace PayrollAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     partial class DatabaseContextModelSnapshot : ModelSnapshot
@@ -22,123 +22,130 @@ namespace SuperHeroAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("SuperHeroAPI.Models.OverTime", b =>
+            modelBuilder.Entity("PayrollAPI.Models.OverTime", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<DateTime>("EndAt")
+                    b.Property<DateTime>("endAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsSalary")
+                    b.Property<bool>("isSalaryCalculated")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("StaffId")
+                    b.Property<int>("staffId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartAt")
+                    b.Property<DateTime>("startAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("StaffId");
+                    b.HasIndex("staffId");
 
                     b.ToTable("OverTimes");
                 });
 
-            modelBuilder.Entity("SuperHeroAPI.Models.Salary", b =>
+            modelBuilder.Entity("PayrollAPI.Models.Salary", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<float>("Insurance")
+                    b.Property<float>("insurance")
                         .HasColumnType("real");
 
-                    b.Property<bool>("IsDelivered")
+                    b.Property<bool>("isDelivered")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Month")
+                    b.Property<string>("month")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
-                    b.Property<float>("SalaryBasic")
+                    b.Property<float>("salaryBasic")
                         .HasColumnType("real");
 
-                    b.Property<float>("SalaryOT")
+                    b.Property<float>("salaryOT")
                         .HasColumnType("real");
 
-                    b.Property<float>("SalaryReceived")
+                    b.Property<float>("salaryReceived")
                         .HasColumnType("real");
 
-                    b.Property<int?>("StaffId")
+                    b.Property<int>("staffId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Tax")
+                    b.Property<float>("tax")
                         .HasColumnType("real");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("StaffId");
+                    b.HasIndex("staffId");
 
                     b.ToTable("Salaries");
                 });
 
-            modelBuilder.Entity("SuperHeroAPI.Models.Staff", b =>
+            modelBuilder.Entity("PayrollAPI.Models.Staff", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
-                    b.Property<float>("Age")
+                    b.Property<DateTime>("dateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<float>("salary")
                         .HasColumnType("real");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("sex")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
-                    b.Property<float>("Salary")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Sex")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("Staffs");
                 });
 
-            modelBuilder.Entity("SuperHeroAPI.Models.OverTime", b =>
+            modelBuilder.Entity("PayrollAPI.Models.OverTime", b =>
                 {
-                    b.HasOne("SuperHeroAPI.Models.Staff", "Staff")
-                        .WithMany("Overtimes")
-                        .HasForeignKey("StaffId");
+                    b.HasOne("PayrollAPI.Models.Staff", "staff")
+                        .WithMany("overTimes")
+                        .HasForeignKey("staffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Staff");
+                    b.Navigation("staff");
                 });
 
-            modelBuilder.Entity("SuperHeroAPI.Models.Salary", b =>
+            modelBuilder.Entity("PayrollAPI.Models.Salary", b =>
                 {
-                    b.HasOne("SuperHeroAPI.Models.Staff", "Staff")
-                        .WithMany("Salaries")
-                        .HasForeignKey("StaffId");
+                    b.HasOne("PayrollAPI.Models.Staff", "staff")
+                        .WithMany("salaries")
+                        .HasForeignKey("staffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Staff");
+                    b.Navigation("staff");
                 });
 
-            modelBuilder.Entity("SuperHeroAPI.Models.Staff", b =>
+            modelBuilder.Entity("PayrollAPI.Models.Staff", b =>
                 {
-                    b.Navigation("Overtimes");
+                    b.Navigation("overTimes");
 
-                    b.Navigation("Salaries");
+                    b.Navigation("salaries");
                 });
 #pragma warning restore 612, 618
         }

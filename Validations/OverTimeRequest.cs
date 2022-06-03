@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace SuperHeroAPI.Validations
+namespace PayrollAPI.Validations
 {
     public class OverTimeRequest
     {
-   
-        [Required] public DateTime StartAt { get; set; }
-        [Required] public DateTime EndAt { get; set; }
-
-        [Required]  public bool IsSalary { get; set; }
+        [Required] public DateTime startAt { get; set; }
+        [Required] public DateTime endAt { get; set; }
+        [Required] public bool isSalary { get; set; }
+        [Required] public int staffId { get; set; }
     }
 }

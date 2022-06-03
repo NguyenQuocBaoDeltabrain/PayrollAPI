@@ -1,18 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-namespace SuperHeroAPI.Models
+﻿namespace PayrollAPI.Models
 {
     public class OverTime
     {
-        public int Id { get; set; }
-        public DateTime StartAt {get; set; }
-        public DateTime EndAt { get; set; }
-
-        public bool IsSalary { get; set; }
-
-    
-        public int? StaffId { get; set; } = null;
-
-   
-        public Staff? Staff { get; set; }
+        public int id { get; set; }
+        public DateTime startAt { get; set; }
+        public DateTime endAt { get; set; }
+        public bool isSalaryCalculated { get; set; }
+        public int staffId { get; set; }
+        public Staff staff { get; set; }
     }
 }

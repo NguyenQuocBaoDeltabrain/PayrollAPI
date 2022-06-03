@@ -1,12 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SuperHeroAPI.Validations;
-using SuperHeroAPI.Services;
-using SuperHeroAPI.Models;
+using PayrollAPI.Services;
+using PayrollAPI.Validations;
 
 
-namespace SuperHeroAPI.Controllers
+namespace PayrollAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,41 +16,32 @@ namespace SuperHeroAPI.Controllers
             _staffService = staffService;
         }
 
-
-        // GET: api/Staffs/5
         [HttpGet("{id}")]
-        public IActionResult GetStaff(int id)
+        public IActionResult findById(int id)
         {
-            var response = _staffService.GetStaffByID(id);
+            StaffResponse response = _staffService.findById(id);
             return Ok(response);
         }
 
-        // PUT: api/Staffs/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutStaff(int id, StaffRequest dto)
-        {
-              _staffService.Update(id, dto);
-              return Ok( new { message = "Updated successfully" });
-           
-        }
-
-        // POST: api/Staffs
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public IActionResult PostStaff(StaffRequest dto)
+        public ActionResult Create(StaffRequest dto)
         {
             _staffService.Create(dto);
-            return Created("Ok", new { message = "Create Staff successfully" });
+            return Created("Ok", new { message = "Create Successfully" });
         }
 
-        // DELETE: api/Staffs/5
+        [HttpPut("{id}")]
+        public ActionResult Update(int id, StaffRequest dto)
+        {
+            _staffService.Update(id, dto);
+            return Ok(new { message = "Updated Successfully" });
+        }
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteStaff(int id)
+        public ActionResult Remove(int id)
         {
             _staffService.Remove(id);
-            return Ok();
+            return Ok(new { message = "Remove Successfully" });
         }
-
     }
 }

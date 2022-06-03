@@ -1,14 +1,12 @@
-﻿namespace SuperHeroAPI.Validations
+﻿namespace PayrollAPI.Validations
 {
     public class SalaryResponse
     {
-        public int Id { get; set; }
-        public string Month { get; set; }
-
-        public float SalaryBasic { get; set; }
-        public float SalaryOT { get; set; }
-     
-        public float SalaryReceived { get; set; }
-
+        public string month { get; set; }
+        public float salaryBasic { get; set; }
+        public float salaryOT { get; set; }
+        public float tax { get; set; }
+        public float insurance { get; set; }
+        public float salaryReceived { get; set; }
     }
 }

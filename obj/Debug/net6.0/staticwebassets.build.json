@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "e9c3ixGamqx3A8OBZdvX//0Y18P8F8Mfiv35UxyUQRQ=",
-  "Source": "SuperHeroAPI",
-  "BasePath": "_content/SuperHeroAPI",
+  "Hash": "gLG1F7XnRmVMU03m/tuc313YPb140D1JsNBVI+efl7c=",
+  "Source": "PayrollAPI",
+  "BasePath": "_content/PayrollAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

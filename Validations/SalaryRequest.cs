@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace SuperHeroAPI.Validations
+namespace PayrollAPI.Validations
 {
     public class SalaryRequest
     {
-        [Required] public int Id { get; set; }
-        [Required] public string Month { get; set; }
+        [MaxLength(10)]
+        [Required] public string month { get; set; }
     }
 }

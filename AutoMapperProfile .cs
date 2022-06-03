@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
-using SuperHeroAPI.Models;
-using SuperHeroAPI.Validations;
-namespace SuperHeroAPI
+using PayrollAPI.Models;
+using PayrollAPI.Validations;
+namespace PayrollAPI
 {
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
         {
-            CreateMap<Staff, StaffResponse>();
-            CreateMap<StaffRequest, Staff>();
-            CreateMap<Salary, SalaryResponse>();
-            CreateMap<SalaryRequest, Salary>();
-
+            _ = CreateMap<StaffRequest, Staff>();
+            _ = CreateMap<Staff, StaffResponse>();
+            _ = CreateMap<SalaryRequest, Salary>();
+            _ = CreateMap<Salary, SalaryResponse>();
+            _ = CreateMap<OverTimeRequest, OverTime>();
+            _ = CreateMap<OverTime, OvertimeResponse>();
         }
     }
 }

@@ -1,19 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-namespace SuperHeroAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+namespace PayrollAPI.Models
 {
     public class Staff
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public float Salary { get; set; }
-        public float Age { get; set; }
-        public string Sex { get; set; }
-
-        [ForeignKey("StaffId")]
-        public List<OverTime>? Overtimes { get; set; }
-
-        [InverseProperty("Staff")]
-        public List<Salary>? Salaries { get; set; }
+        public int id { get; set; }
+        [MaxLength(50)]
+        public string name { get; set; }
+        public float salary { get; set; }
+        public DateTime dateOfBirth { get; set; }
+        [MaxLength(10)]
+        public string sex { get; set; }
+        [ForeignKey("staffId")]
+        public List<OverTime> overTimes { get; set; }
+        [ForeignKey("staffId")]
+        public List<Salary> salaries { get; set; }
     }
 }

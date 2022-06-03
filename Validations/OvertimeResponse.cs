@@ -1,10 +1,9 @@
-﻿namespace SuperHeroAPI.Validations
+﻿namespace PayrollAPI.Validations
 {
     public class OvertimeResponse
     {
-        public int Id { get; set; }
-        public DateTime StartAt { get; set; }
-        public DateTime EndAt { get; set; }
-
+        public DateTime startAt { get; set; }
+        public DateTime endAt { get; set; }
+        public int staffId { get; set; }
     }
 }

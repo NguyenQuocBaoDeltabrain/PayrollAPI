@@ -1,11 +1,10 @@
-﻿namespace SuperHeroAPI.Validations
+﻿namespace PayrollAPI.Validations
 {
     public class StaffResponse
     {
-        public string Name { get; set; }
-
-        public float Salary { get; set; }
-        public float Age { get; set; }
-        public string Sex { get; set; }
+        public string name { get; set; }
+        public float salary { get; set; }
+        public DateTime dateOfBirth { get; set; }
+        public string sex { get; set; }
     }
 }
