@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PayrollAPI.Validations;
 using PayrollAPI.Services;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 
 namespace PayrollAPI.Controllers
 {
@@ -15,9 +16,9 @@ namespace PayrollAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult findById(int id)
+        public IActionResult FindById(int id)
         {
-            HolidayResponse response = _holidayService.findById(id);
+            HolidayResponse response = _holidayService.FindById(id);
             return Ok(response);
         }
 

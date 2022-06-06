@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PayrollAPI.Models;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 using System.Linq;
 
 namespace PayrollAPI.Services

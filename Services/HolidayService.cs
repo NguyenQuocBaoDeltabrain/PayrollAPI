@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using PayrollAPI.Models;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
+
 namespace PayrollAPI.Services
 {
     public interface IHolidayService
     {
-        HolidayResponse findById(int id);
+        HolidayResponse FindById(int id);
         void Create(HolidayRequest staff);
         void Update(int id, HolidayRequest staff);
         void Remove(int id);
@@ -19,8 +21,7 @@ namespace PayrollAPI.Services
             _context = context;
             _mapper = mapper;
         }
-
-        public HolidayResponse findById(int id)
+        public HolidayResponse FindById(int id)
         {
             Holiday holiday = _context.Holidays.Find(id) ?? throw new KeyNotFoundException("Holiday Not Found");
             HolidayResponse response = _mapper.Map<HolidayResponse>(holiday);
@@ -28,25 +29,14 @@ namespace PayrollAPI.Services
         }
         public void Create(HolidayRequest dto)
         {
-            //bool isExist = _context.Holidays.Count(holiday => holiday.name == dto.name) > 0;
-            //if (isExist) throw new BadHttpRequestException("Holiday Is Exist");
-            //if (dto.salary < 1000000)
-            //{
-            //    throw new BadHttpRequestException("Salary Not < 1,000,000 VND");
-            //}
-            //else
-            //{
-                Holiday holiday = _mapper.Map<Holiday>(dto);
-                 _context.Holidays.Add(holiday);
-                 _context.SaveChanges();
-            //}
+            bool isExist = _context.Holidays.Count(holiday => holiday.feteday.Equals(dto.feteday))> 0;
+            if (isExist) throw new BadHttpRequestException("Holiday Is Exist");
+            Holiday holiday = _mapper.Map<Holiday>(dto);
+            _context.Holidays.Add(holiday);
+            _context.SaveChanges();
         }
         public void Update(int id, HolidayRequest dto)
         {
-            //if (dto.salary < 1000000)
-            //{
-            //    throw new BadHttpRequestException("Salary Not < 1,000,000 VND");
-            //}
             Holiday holiday = _context.Holidays.Find(id) ?? throw new KeyNotFoundException("Holiday Not Found");
             _mapper.Map(dto, holiday);
             _context.Holidays.Update(holiday);
@@ -54,11 +44,9 @@ namespace PayrollAPI.Services
         }
         public void Remove(int id)
         {
-
             Holiday holiday = _context.Holidays.Find(id) ?? throw new KeyNotFoundException("Holiday Not Found");
             _context.Holidays.Remove(holiday);
             _context.SaveChanges();
-
         }
     }
 }

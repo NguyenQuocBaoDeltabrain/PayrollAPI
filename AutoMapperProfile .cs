@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using PayrollAPI.Models;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
+
 namespace PayrollAPI
 {
     public class AutoMapperProfile : Profile

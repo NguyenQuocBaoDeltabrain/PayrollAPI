@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using PayrollAPI.Services;
-using PayrollAPI.Validations;
-
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 
 namespace PayrollAPI.Controllers
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PayrollAPI.Services;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 //using System.Web.Http;
 
 namespace PayrollAPI.Controllers
@@ -29,10 +30,10 @@ namespace PayrollAPI.Controllers
             return Ok(response.Value);
         }
 
-        [HttpPost("findsByStaffIdAndMonth")]
-        public IActionResult FilterSalaryWithMonthAndStaffId(FindStaffAndOTRequest dto)
+        [HttpPost("finds-by-month")]
+        public IActionResult FindsByMonth(FindStaffAndOTRequest dto)
         {
-            List<SalaryResponse> response = _salaryService.FindsByStaffIdAndMonth(dto);
+            List<SalaryResponse> response = _salaryService.FindsByMonth(dto);
             return Ok(response);
         }
     }

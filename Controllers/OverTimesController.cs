@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PayrollAPI.Services;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 
 namespace PayrollAPI.Controllers
 {
@@ -15,9 +16,9 @@ namespace PayrollAPI.Controllers
         }
 
         [HttpGet("{staffId}")]
-        public ActionResult finsByStaffIdAndMonth(int staffId, SalaryRequest salary)
+        public ActionResult FinsByStaffIdAndMonth(int staffId, SalaryRequest salary)
         {
-            List<OvertimeResponse> response = _overTimeService.finsByStaffIdAndMonth(staffId, salary);
+            List<OvertimeResponse> response = _overTimeService.FinsByStaffIdAndMonth(staffId, salary);
             return Ok(response);
         }
 

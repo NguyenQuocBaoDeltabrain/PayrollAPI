@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PayrollAPI.Models;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 
 namespace PayrollAPI.Services
 {
@@ -8,7 +9,7 @@ namespace PayrollAPI.Services
     {
         void Create(OverTimeRequest dto);
         void Remove(int id);
-        List<OvertimeResponse> finsByStaffIdAndMonth(int staffId, SalaryRequest salary);
+        List<OvertimeResponse> FinsByStaffIdAndMonth(int staffId, SalaryRequest salary);
     }
     public class OverTimeService : IOverTimeService
     {
@@ -26,17 +27,16 @@ namespace PayrollAPI.Services
             bool isStaffExist = _context.Staffs.Count(staff => staff.id == dto.staffId) >0;
             if(!isStaffExist) throw new KeyNotFoundException("Staff ID Isn't Exist");
             OverTime overTime = _mapper.Map<OverTime>(dto);
-            _ = _context.OverTimes.Add(overTime);
-            _ = _context.SaveChanges();
+            _context.OverTimes.Add(overTime);
+            _context.SaveChanges();
         }
-
         public void Remove(int id)
         {
             OverTime overTime = _context.OverTimes.Find(id) ?? throw new KeyNotFoundException("OverTime Not Found");
-            _ = _context.OverTimes.Remove(overTime);
-            _ = _context.SaveChanges();
+            _context.OverTimes.Remove(overTime);
+            _context.SaveChanges();
         }
-        public List<OvertimeResponse> convertToRO(List<OverTime> overtimes)
+        public List<OvertimeResponse> ConvertToRO(List<OverTime> overtimes)
         {
             List<OvertimeResponse> overtimesRO = new();
             foreach (OverTime item in overtimes)
@@ -46,13 +46,11 @@ namespace PayrollAPI.Services
             }
             return overtimesRO;
         }
-
-        public bool dateBelongToTheMonth(DateTime value, DateTime start, DateTime end)
+        public bool DateBelongToTheMonth(DateTime value, DateTime start, DateTime end)
         {
             return (start <= value) && (value <= end);
         }
-
-        public List<OvertimeResponse> finsByStaffIdAndMonth(int staffId, SalaryRequest salary)
+        public List<OvertimeResponse> FinsByStaffIdAndMonth(int staffId, SalaryRequest salary)
         {
             int month = int.Parse(salary.month.Split('-')[1]);
             int year = int.Parse(salary.month.Split('-')[0]);
@@ -64,14 +62,14 @@ namespace PayrollAPI.Services
 
             foreach (OverTime overTime in overTimes)
             {
-                bool hasStartAtBelongToTheMonth = dateBelongToTheMonth(overTime.startAt, firstDayOfMonth, lastDayOfMonth);
-                bool hasEndAtBelongToTheMonth = dateBelongToTheMonth(overTime.endAt, firstDayOfMonth, lastDayOfMonth);
+                bool hasStartAtBelongToTheMonth = DateBelongToTheMonth(overTime.startAt, firstDayOfMonth, lastDayOfMonth);
+                bool hasEndAtBelongToTheMonth = DateBelongToTheMonth(overTime.endAt, firstDayOfMonth, lastDayOfMonth);
                 if (hasStartAtBelongToTheMonth && hasEndAtBelongToTheMonth)
                 {
                     overTimesFilterWithMonth.Add(overTime);
                 }
             }
-            List<OvertimeResponse> overTimesRO = convertToRO(overTimesFilterWithMonth);
+            List<OvertimeResponse> overTimesRO = ConvertToRO(overTimesFilterWithMonth);
             return overTimesRO;
         }
     }

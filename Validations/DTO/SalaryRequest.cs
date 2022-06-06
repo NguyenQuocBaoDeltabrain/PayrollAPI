@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace PayrollAPI.Validations
+namespace PayrollAPI.Validations.DTO
 {
     public class SalaryRequest
     {

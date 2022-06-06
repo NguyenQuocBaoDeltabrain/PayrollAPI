@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
-using Newtonsoft.Json.Linq;
 using PayrollAPI.Models;
-using PayrollAPI.Validations;
+using PayrollAPI.Validations.DTO;
+using PayrollAPI.Validations.RO;
 using AutoMapper;
 
 namespace PayrollAPI.Services
@@ -10,8 +10,8 @@ namespace PayrollAPI.Services
     public interface ISalaryService
     {
         List<SalaryResponse> Finds(string month);
-        List<SalaryResponse> FindsByStaffIdAndMonth(FindStaffAndOTRequest dto);
-        int totalWorkdaysInMonth(int month, int year);
+        List<SalaryResponse> FindsByMonth(FindStaffAndOTRequest dto);
+        int TotalWorkdaysInMonth(int month, int year);
         float TaxEachStaff(float totalSalary);
         float SalaryOTEachStaff(Staff staff, List<OverTime> overTimes, int month, int year);
         ActionResult<object> Create(SalaryRequest salary);
@@ -25,12 +25,26 @@ namespace PayrollAPI.Services
             _context = context;
             _mapper = mapper;
         }
-
-        public string jsonFile = System.Environment.CurrentDirectory + @"\Utils\holidays.json";
-        public List<OverTime> FindsOTByID(int staffId)
+        public bool DateBelongToTheMonth(DateTime value, DateTime start, DateTime end)
         {
+            return (start <= value) && (value <= end);
+        }
+        public List<OverTime> FindsOT(int staffId,int month,int year)
+        {
+            DateTime firstDayOfMonth = new(year, month, 1);
+            DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             List<OverTime> overTimes = _context.OverTimes.Where(ot => ot.staffId == staffId).ToList();
-            return overTimes;
+            List<OverTime> overTimesFilterWithMonth = new();
+            foreach (OverTime overTime in overTimes)
+            {
+                bool hasStartAtBelongToTheMonth = DateBelongToTheMonth(overTime.startAt, firstDayOfMonth, lastDayOfMonth);
+                bool hasEndAtBelongToTheMonth = DateBelongToTheMonth(overTime.endAt, firstDayOfMonth, lastDayOfMonth);
+                if (hasStartAtBelongToTheMonth && hasEndAtBelongToTheMonth)
+                {
+                    overTimesFilterWithMonth.Add(overTime);
+                }
+            }
+            return overTimesFilterWithMonth;
         }
         public List<SalaryResponse> Finds(string month)
         {
@@ -50,21 +64,10 @@ namespace PayrollAPI.Services
             return salariesRO;
         }
 
-        public List<SalaryResponse> FindsByStaffIdAndMonth(FindStaffAndOTRequest dto)
+        public List<SalaryResponse> FindsByMonth(FindStaffAndOTRequest dto)
         {
-            //bool isValid = IsValid(dto.month,dto.staffId);
-            //if (!isValid)
-            //{
-            //    throw new BadHttpRequestException("Input Incorrect!");
-            //}
-
-            int day = int.Parse(dto.month.Split('-')[2]);
-            if (day != 1)
-            {
-                throw new BadHttpRequestException("Day only 01!");
-            }
-
-            List<Salary> salaries = _context.Salaries.Where(salary => salary.staff.id == dto.staffId && salary.month == dto.month).ToList();
+          
+            List<Salary> salaries = _context.Salaries.Where(salary => salary.month == dto.month).ToList();
             List<SalaryResponse> salariesRO = CovertRO(salaries);
             return salariesRO;
         }
@@ -77,7 +80,7 @@ namespace PayrollAPI.Services
                 .Count();
             return answer;
         }
-        public int totalWorkdaysInMonth(int month, int year)
+        public int TotalWorkdaysInMonth(int month, int year)
         {
             int totalDays = DateTime.DaysInMonth(year, month);
             int numberOfSundays = NumberOfParticularDaysInMonth(year, month, totalDays, DayOfWeek.Sunday);
@@ -89,14 +92,9 @@ namespace PayrollAPI.Services
         {
             float totalSalaryOT = 0;
             int numberOfWorkingHoursPerDay = 8;
-            int numberOfWorkingDaysInMonth = totalWorkdaysInMonth(month, year);
+            int numberOfWorkingDaysInMonth = TotalWorkdaysInMonth(month, year);
             int totalWorkingHoursInMonth = numberOfWorkingDaysInMonth * numberOfWorkingHoursPerDay;
             float salaryPerHour = staff.salary / totalWorkingHoursInMonth;
-
-            //Load holidays in json file
-            //string json = File.ReadAllText(jsonFile);
-            //JObject jObject = JObject.Parse(json);
-            //JArray holidays = (JArray)jObject["holidays"];
 
             foreach (OverTime overTime in overTimes)
             {
@@ -104,15 +102,14 @@ namespace PayrollAPI.Services
                 float salaryOT;
                 bool isWeekend = false;
                 string covertToString = overTime.startAt.ToString("yyyy-MM-dd");
-                //bool isHoliday = holidays.AsEnumerable().Where(x => x["day"].ToString().Equals(covertToString)).Count() > 0;
                 bool isHoliday = _context.Holidays.Where(x => x.feteday.Equals(covertToString)).Count() > 0;
 
                 if (isHoliday)
-                    {
+                {
                         isHoliday = true;
                         salaryOT = (float)(hourOT * salaryPerHour * 3);
                         totalSalaryOT += salaryOT;
-                    }
+                }
 
                 if ((overTime.startAt.DayOfWeek == DayOfWeek.Saturday || overTime.startAt.DayOfWeek == DayOfWeek.Sunday) && !isHoliday)
                 {
@@ -126,6 +123,7 @@ namespace PayrollAPI.Services
                     salaryOT = (float)(hourOT * salaryPerHour * 1.5);
                     totalSalaryOT += salaryOT;
                 }
+
                 isWeekend = false;
                 isHoliday = false;
                 overTime.isSalaryCalculated = true;
@@ -136,7 +134,6 @@ namespace PayrollAPI.Services
         public float TaxEachStaff(float totalSalary)
         {
             float incomeTaxes = totalSalary - 11000000;
-
             float tax = 0;
             switch (incomeTaxes)
             {
@@ -165,11 +162,8 @@ namespace PayrollAPI.Services
                     tax = (float)((incomeTaxes * 0.35) - 9850000);
                     break;
             }
-            
-
             return tax;
         }
-
         public bool IsValid(string month)
         {
             bool result = DateTime.TryParseExact(
@@ -208,18 +202,15 @@ namespace PayrollAPI.Services
             {
                 foreach (Staff staff in staffs)
                 {
-                    //Salary Over Times
-                    List<OverTime> overTimes = FindsOTByID(staff.id);
+                    List<OverTime> overTimes = FindsOT(staff.id,month,year);
                     salaryOT = SalaryOTEachStaff(staff, overTimes, month, year);
                     float salaryBasic = staff.salary;
                     float totalSalary = salaryBasic + salaryOT;
-                    //Tax
                     tax = TaxEachStaff(totalSalary);
-                    //Insurance
                     float insurance = (float)(salaryBasic * 0.105);
                     float salaryReceived = totalSalary - tax - insurance;
-
                     bool isExist = IsRecordExist(salary.month, staff.id);
+
                     if (isExist)
                     {
                         Salary salaryOfStaff = _context.Salaries.Where(salary => salary.month == salary.month && salary.staff.id == staff.id).FirstOrDefault();
@@ -231,11 +222,10 @@ namespace PayrollAPI.Services
                     else
                     {
                         Salary salaryOfStaff = new() { month = salary.month, salaryBasic = salaryBasic, salaryOT = salaryOT, tax = tax, insurance = insurance, salaryReceived = salaryReceived, staff = staff };
-                        _ = _context.Salaries.Add(salaryOfStaff);
+                        _context.Salaries.Add(salaryOfStaff);
                         totalRecordCreatedSuccess++;
                     }
-                    _ = _context.SaveChanges();
-
+                    _context.SaveChanges();
                 }
                 transaction.Commit();
                 object result = new
@@ -245,7 +235,6 @@ namespace PayrollAPI.Services
                     Updated = totalRecordUpdatedSuccess
                 };
                 return result;
-
             }
             catch (Exception)
             {
@@ -253,11 +242,8 @@ namespace PayrollAPI.Services
                 return new
                 {
                     Message = "Error",
-
                 };
             }
         }
-
-        
     }
 }

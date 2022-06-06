@@ -1,4 +1,4 @@
-﻿namespace PayrollAPI.Validations
+﻿namespace PayrollAPI.Validations.RO
 {
     public class StaffResponse
     {
