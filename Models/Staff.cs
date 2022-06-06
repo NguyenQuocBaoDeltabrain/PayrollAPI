@@ -12,7 +12,7 @@ namespace PayrollAPI.Models
         [MaxLength(10)]
         public string sex { get; set; }
 
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
         [ForeignKey("staffId")]
         public List<OverTime> overTimes { get; set; }
         [ForeignKey("staffId")]

@@ -9,8 +9,8 @@ namespace PayrollAPI.Services
 {
     public interface ISalaryService
     {
-        List<SalaryResponse> finds(string month);
-        List<SalaryResponse> findsByStaffIdAndMonth(FindStaffAndOTRequest dto);
+        List<SalaryResponse> Finds(string month);
+        List<SalaryResponse> FindsByStaffIdAndMonth(FindStaffAndOTRequest dto);
         int totalWorkdaysInMonth(int month, int year);
         float TaxEachStaff(float totalSalary);
         float SalaryOTEachStaff(Staff staff, List<OverTime> overTimes, int month, int year);
@@ -27,19 +27,19 @@ namespace PayrollAPI.Services
         }
 
         public string jsonFile = System.Environment.CurrentDirectory + @"\Utils\holidays.json";
-        public List<OverTime> findsOTByID(int staffId)
+        public List<OverTime> FindsOTByID(int staffId)
         {
             List<OverTime> overTimes = _context.OverTimes.Where(ot => ot.staffId == staffId).ToList();
             return overTimes;
         }
-        public List<SalaryResponse> finds(string month)
+        public List<SalaryResponse> Finds(string month)
         {
             List<Salary> salaries = _context.Salaries.Where(salary => salary.month == month).ToList();
-            List<SalaryResponse> salariesRO = covertRO(salaries);
+            List<SalaryResponse> salariesRO = CovertRO(salaries);
             return salariesRO;
         }
 
-        public List<SalaryResponse> covertRO(List<Salary> salaries)
+        public List<SalaryResponse> CovertRO(List<Salary> salaries)
         {
             List<SalaryResponse> salariesRO = new();
             foreach (Salary salary in salaries)
@@ -50,7 +50,7 @@ namespace PayrollAPI.Services
             return salariesRO;
         }
 
-        public List<SalaryResponse> findsByStaffIdAndMonth(FindStaffAndOTRequest dto)
+        public List<SalaryResponse> FindsByStaffIdAndMonth(FindStaffAndOTRequest dto)
         {
             //bool isValid = IsValid(dto.month,dto.staffId);
             //if (!isValid)
@@ -65,7 +65,7 @@ namespace PayrollAPI.Services
             }
 
             List<Salary> salaries = _context.Salaries.Where(salary => salary.staff.id == dto.staffId && salary.month == dto.month).ToList();
-            List<SalaryResponse> salariesRO = covertRO(salaries);
+            List<SalaryResponse> salariesRO = CovertRO(salaries);
             return salariesRO;
         }
         public int NumberOfParticularDaysInMonth(int year, int month, int totalDays, DayOfWeek dayOfWeek)
@@ -94,18 +94,18 @@ namespace PayrollAPI.Services
             float salaryPerHour = staff.salary / totalWorkingHoursInMonth;
 
             //Load holidays in json file
-            string json = File.ReadAllText(jsonFile);
-            JObject jObject = JObject.Parse(json);
-            JArray holidays = (JArray)jObject["holidays"];
+            //string json = File.ReadAllText(jsonFile);
+            //JObject jObject = JObject.Parse(json);
+            //JArray holidays = (JArray)jObject["holidays"];
 
             foreach (OverTime overTime in overTimes)
             {
                 float hourOT = (float)(overTime.endAt - overTime.startAt).TotalHours;
                 float salaryOT;
-                //bool isHoliday = false;
                 bool isWeekend = false;
                 string covertToString = overTime.startAt.ToString("yyyy-MM-dd");
-                bool isHoliday = holidays.AsEnumerable().Where(x => x["day"].ToString().Equals(covertToString)).Count() > 0;
+                //bool isHoliday = holidays.AsEnumerable().Where(x => x["day"].ToString().Equals(covertToString)).Count() > 0;
+                bool isHoliday = _context.Holidays.Where(x => x.feteday.Equals(covertToString)).Count() > 0;
 
                 if (isHoliday)
                     {
@@ -209,7 +209,7 @@ namespace PayrollAPI.Services
                 foreach (Staff staff in staffs)
                 {
                     //Salary Over Times
-                    List<OverTime> overTimes = findsOTByID(staff.id);
+                    List<OverTime> overTimes = FindsOTByID(staff.id);
                     salaryOT = SalaryOTEachStaff(staff, overTimes, month, year);
                     float salaryBasic = staff.salary;
                     float totalSalary = salaryBasic + salaryOT;

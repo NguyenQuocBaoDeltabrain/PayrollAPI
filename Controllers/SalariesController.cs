@@ -16,9 +16,9 @@ namespace PayrollAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult finds([FromQuery] string month)
+        public IActionResult Finds([FromQuery] string month)
         {
-            List<SalaryResponse> salaries = _salaryService.finds(month);
+            List<SalaryResponse> salaries = _salaryService.Finds(month);
             return Ok(salaries);
         }
 
@@ -32,7 +32,7 @@ namespace PayrollAPI.Controllers
         [HttpPost("findsByStaffIdAndMonth")]
         public IActionResult FilterSalaryWithMonthAndStaffId(FindStaffAndOTRequest dto)
         {
-            List<SalaryResponse> response = _salaryService.findsByStaffIdAndMonth(dto);
+            List<SalaryResponse> response = _salaryService.FindsByStaffIdAndMonth(dto);
             return Ok(response);
         }
     }

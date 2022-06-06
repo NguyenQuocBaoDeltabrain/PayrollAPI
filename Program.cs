@@ -12,8 +12,9 @@ var services = builder.Services.AddDbContext<DatabaseContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 services.AddScoped<ISalaryService, SalaryService>();
-services.AddScoped<IStaffsService, StaffService>();
+services.AddScoped<IStaffService, StaffService>();
 services.AddScoped<IOverTimeService, OverTimeService>();
+services.AddScoped<IHolidayService, HolidayService>();
 services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

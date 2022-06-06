@@ -10,16 +10,16 @@ namespace PayrollAPI.Controllers
     [ApiController]
     public class StaffsController : ControllerBase
     {
-        private readonly IStaffsService _staffService;
-        public StaffsController(IStaffsService staffService)
+        private readonly IStaffService _staffService;
+        public StaffsController(IStaffService staffService)
         {
             _staffService = staffService;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult findById(int id)
+        [HttpGet("filter-staff")]
+        public IActionResult Find([FromQuery] int? id, [FromQuery] string? name, [FromQuery] bool state)
         {
-            StaffResponse response = _staffService.findById(id);
+            StaffResponse response = _staffService.Find(id,name,state);
             return Ok(response);
         }
 
@@ -28,6 +28,13 @@ namespace PayrollAPI.Controllers
         {
             _staffService.Create(dto);
             return Created("Ok", new { message = "Create Successfully" });
+        }
+
+        [HttpPost("disable-active/{id}")]
+        public ActionResult DisableActive(int id)
+        {
+            _staffService.DisableActive(id);
+            return Created("Ok", new { message = "Disable Active State Successfully" });
         }
 
         [HttpPut("{id}")]

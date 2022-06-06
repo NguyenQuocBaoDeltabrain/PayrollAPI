@@ -7,12 +7,14 @@ namespace PayrollAPI
     {
         public AutoMapperProfile()
         {
-            _ = CreateMap<StaffRequest, Staff>();
-            _ = CreateMap<Staff, StaffResponse>();
-            _ = CreateMap<SalaryRequest, Salary>();
-            _ = CreateMap<Salary, SalaryResponse>();
-            _ = CreateMap<OverTimeRequest, OverTime>();
-            _ = CreateMap<OverTime, OvertimeResponse>();
+            CreateMap<StaffRequest, Staff>();
+            CreateMap<Staff, StaffResponse>();
+            CreateMap<SalaryRequest, Salary>();
+            CreateMap<Salary, SalaryResponse>();
+            CreateMap<OverTimeRequest, OverTime>();
+            CreateMap<OverTime, OvertimeResponse>();
+            CreateMap<HolidayRequest, Holiday>();
+            CreateMap<Holiday, HolidayResponse>();
         }
     }
 }

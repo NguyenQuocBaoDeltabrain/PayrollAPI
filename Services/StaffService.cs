@@ -1,18 +1,20 @@
 ﻿using AutoMapper;
 using PayrollAPI.Models;
 using PayrollAPI.Validations;
+using System.Linq;
 
 namespace PayrollAPI.Services
 {
-    public interface IStaffsService
+    public interface IStaffService
     {
-        StaffResponse findById(int id);
+        StaffResponse Find(int? id,string? name,bool state);
         void Create(StaffRequest staff);
         void Update(int id, StaffRequest staff);
         void Remove(int id);
+        void DisableActive(int id);
     }
 
-    public class StaffService : IStaffsService
+    public class StaffService : IStaffService
     {
         private readonly DatabaseContext _context;
         private readonly IMapper _mapper;
@@ -22,9 +24,9 @@ namespace PayrollAPI.Services
             _mapper = mapper;
         }
 
-        public StaffResponse findById(int id)
+        public StaffResponse Find(int? id,string? name,bool state)
         {
-            Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
+            Staff staff = _context.Staffs.Where((emp) => (emp.id == id || emp.name == name) && emp.isActive == state).FirstOrDefault() ?? throw new KeyNotFoundException("Staff Not Found");
             StaffResponse response = _mapper.Map<StaffResponse>(staff);
             return response;
         }
@@ -39,8 +41,8 @@ namespace PayrollAPI.Services
             else
             {
                 Staff staff = _mapper.Map<Staff>(dto);
-                _ = _context.Staffs.Add(staff);
-                _ = _context.SaveChanges();
+                _context.Staffs.Add(staff);
+                _context.SaveChanges();
             }
         }
         public void Update(int id, StaffRequest dto)
@@ -50,17 +52,22 @@ namespace PayrollAPI.Services
                 throw new BadHttpRequestException("Salary Not < 1,000,000 VND");
             }
             Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
-            _ = _mapper.Map(dto,staff);
-            _ = _context.Staffs.Update(staff);
-            _ = _context.SaveChanges();
+            _mapper.Map(dto,staff);
+            _context.Staffs.Update(staff);
+            _context.SaveChanges();
         }
         public void Remove(int id)
         {
 
             Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
-            _ = _context.Staffs.Remove(staff);
-            _ = _context.SaveChanges();
-
+            _context.Staffs.Remove(staff);
+            _context.SaveChanges();
+        }
+        public void DisableActive(int id)
+        {
+            Staff staff = _context.Staffs.Find(id) ?? throw new KeyNotFoundException("Staff Not Found");
+            staff.isActive = false;
+            _context.SaveChanges();
         }
     }
 }
