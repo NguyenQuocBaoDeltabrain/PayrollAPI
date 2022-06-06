@@ -101,6 +101,9 @@ namespace PayrollAPI.Migrations
                     b.Property<DateTime>("dateOfBirth")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("name")
                         .IsRequired()
                         .HasMaxLength(50)

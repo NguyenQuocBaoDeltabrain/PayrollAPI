@@ -18,7 +18,8 @@ namespace PayrollAPI.Migrations
                     name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     salary = table.Column<float>(type: "real", nullable: false),
                     dateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    sex = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                    sex = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

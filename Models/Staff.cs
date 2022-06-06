@@ -11,6 +11,8 @@ namespace PayrollAPI.Models
         public DateTime dateOfBirth { get; set; }
         [MaxLength(10)]
         public string sex { get; set; }
+
+        public bool isActive { get; set; }
         [ForeignKey("staffId")]
         public List<OverTime> overTimes { get; set; }
         [ForeignKey("staffId")]

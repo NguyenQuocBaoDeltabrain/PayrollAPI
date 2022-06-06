@@ -12,7 +12,7 @@ using PayrollAPI.Models;
 namespace PayrollAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220603030151_InitDatabase")]
+    [Migration("20220603085722_InitDatabase")]
     partial class InitDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,6 +102,9 @@ namespace PayrollAPI.Migrations
 
                     b.Property<DateTime>("dateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("name")
                         .IsRequired()
